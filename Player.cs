@@ -46,48 +46,61 @@ public class Player : MonoBehaviour
         }
     }
     private void OnTriggerEnter2D(Collider2D col)
-    {
+    {    
         if (col.tag == "Wrong")//잘못된 위치에 있을때
         {
-            if (!SpawnManager.TutorialMode)
+            if(!SpawnManager.TutorialMode)
             {
                 Hp -= 20;
                 HpSlider.value = Hp;
                 if (Hp <= 0)
                 {
                     game_manager.GetComponent<GameController>().GameOver();//게임메니저에 들어있는 게임오버 실행
+                    
+
                 }
                 if (GameController.IsPlaying)
-                {
+                    {
 
-                    for (int i = 0; i < col.transform.parent.gameObject.transform.childCount; i++)//충돌한 콜라이더의 부모의 자식갯수만큼 실행
-                        Destroy(col.transform.parent.gameObject.transform.GetChild(i).gameObject.GetComponent<BoxCollider2D>());//충돌한 콜라이더의 부모의 자식들의 콜라이더를 파괴
-                }
+                        for (int i = 0; i < col.transform.parent.gameObject.transform.childCount; i++)//충돌한 콜라이더의 부모의 자식갯수만큼 실행
+                            Destroy(col.transform.parent.gameObject.transform.GetChild(i).gameObject.GetComponent<BoxCollider2D>());//충돌한 콜라이더의 부모의 자식들의 콜라이더를 파괴
+                    }
             }
         }
         else if (col.tag == "Right")//옳은 위치에 있을때(다른 컨텐츠 추가도 있을거 같애서 else if 사용)
         {
             GameObject kirat_note_new = Instantiate(kirat_note); //이펙트 생성
             kirat_note_new.transform.parent = col.gameObject.transform; //이펙트 노트(음) 자식으로 할당
-            kirat_note_new.transform.position = new Vector3(0.08f, col.gameObject.transform.position.y+0.35f,-1);
+            kirat_note_new.transform.position = col.gameObject.transform.position;
+            kirat_note_new.transform.Translate(-0.4f,0.4f,-1);
             kirat_note_new.GetComponent<SpriteRenderer>().color = new Color(Random.value, Random.value, Random.value,1f);
 
             Debug.Log("정답");
             Score += 10;
             ScoreUI.text = Score.ToString();
-            col.gameObject.GetComponent<AudioSource>().Play();//Todo소리재생맨맨//맨맨은 선넘었지????
+            col.gameObject.GetComponent<AudioSource>().Play();//Todo소리재생맨맨//맨맨은 선넘었지
             if (GameController.IsPlaying)
             {
                 for (int i = 0; i < col.transform.parent.gameObject.transform.childCount; i++)//충돌한 콜라이더의 부모의 자식갯수만큼 실행
                     Destroy(col.transform.parent.gameObject.transform.GetChild(i).gameObject.GetComponent<BoxCollider2D>());//충돌한 콜라이더의 부모의 자식들의 콜라이더를 파괴
-            }
+            } 
         }
-        if (col.tag == "MusicOver")
+        if(col.tag == "MusicOver")
         {
-            SpawnManager.Music_Playing = false;//음악종료
-            SpawnManager.TutorialMode = true;//튜토리얼모드실행
-            SpawnManager.MusicMode = false;//음악모드 종료
-            SpawnManager.Step++;//1단계 상승
+            if(SpawnManager.Step == 2)
+            {
+                SpawnManager.Music_Playing = false;//음악종료
+                SpawnManager.TutorialMode = false;//튜토리얼모드실행
+                SpawnManager.NormalMode = true;//음악모드 종료
+                SpawnManager.Step ++;//1단계 상승
+            }
+            else
+            {
+                SpawnManager.Music_Playing = false;//음악종료
+                SpawnManager.TutorialMode = true;//튜토리얼모드실행
+                SpawnManager.MusicMode = false;//음악모드 종료
+                SpawnManager.Step ++;//1단계 상승
+            }
         }
     }
 }

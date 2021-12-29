@@ -10,11 +10,27 @@ public class GameController : MonoBehaviour
     public GameObject game_over; //게임오버 패널
     //미구현
     public GameObject Character;
+    public GameObject S_Manger;
+    public GameObject Player;
+    Vector2 P_StartPosition;
+    void Start()
+    {
+        P_StartPosition = Player.transform.position;
+    }
     public void GameStart()
     {
         game_over.SetActive(false);
         IsPlaying = true;
         Character.GetComponent<Player>().PlayerStart();
+        SpawnManager.i = 0;
+        SpawnManager.t = 0;
+        SpawnManager.TutorialMode = true;
+        SpawnManager.NormalMode = false;
+        SpawnManager.MusicMode = false;
+        for(int q = 0; q < S_Manger.transform.childCount; q++)
+        {
+            Destroy(S_Manger.transform.GetChild(q).gameObject);
+        }
     }
     public void GameOver() //player에서 사용
     {
